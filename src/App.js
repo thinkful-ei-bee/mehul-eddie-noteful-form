@@ -7,19 +7,198 @@ import NotePage from './NotePage'
 import './App.css';
 import NotefulContext from './NotefulContext'
 import {withRouter} from 'react-router-dom';
-
+import AddFolder from './AddFolder'
+import AddNote from './AddNote'
 class App extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      folderName: '',
+      noteName:'',
+      noteContent:'',
+      folderNameValid: false,
+      noteNameValid: false,
+      noteContentValid: false,
+      noteFormValid: false,
+      folderFormValid: false,
       STORE: {
         folders: [],
         notes: []
       },
-      fromOrigin: true
+      fromOrigin: true,
+      validationMessages: {
+        folderName: '',
+        noteName: '',
+        noteContent: ''
+      }
     }
   }
+
+  updateFolderName = (folderName) => {
+    this.setState({folderName}, () => {this.validateFolderName(folderName)});
+  }
+
+  updateNoteName = (noteName) => {
+    this.setState({noteName}, () => {this.validateNoteName(noteName)});
+  }
+
+  updateNoteContent = (noteContent) => {
+    this.setState({noteContent}, () => {this.validateNoteContent(noteContent)});
+  }
+
+
+  validateNoteName(fieldValue) {
+    const fieldErrors = {...this.state.validationMessages};
+    let hasError = false;
+
+    fieldValue = fieldValue.trim();
+    if(fieldValue.length === 0) {
+      fieldErrors.noteName = 'Name is required';
+      hasError = true;
+    } else {
+      if (fieldValue.length < 3) {
+        fieldErrors.noteName = 'Name must be at least 3 characters long';
+        hasError = true;
+      } else {
+        fieldErrors.noteName = '';
+        hasError = false;
+      }
+    }
+
+    this.setState({
+      validationMessages: fieldErrors,
+      noteNameValid: !hasError
+    }, this.noteFormValid);
+
+  }
+
+  validateNoteContent(fieldValue) {
+    const fieldErrors = {...this.state.validationMessages};
+    let hasError = false;
+
+    fieldValue = fieldValue.trim();
+    if(fieldValue.length === 0) {
+      fieldErrors.noteContent = 'Content is required';
+      hasError = true;
+    } else {
+      if (fieldValue.length < 3) {
+        fieldErrors.noteContent = 'Content must be at least 3 characters long';
+        hasError = true;
+      } else {
+        fieldErrors.noteContent = '';
+        hasError = false;
+      }
+    }
+
+    this.setState({
+      validationMessages: fieldErrors,
+      noteContentValid: !hasError
+    }, this.noteFormValid);
+
+  }
+
+  noteFormValid() {
+    this.setState({
+      noteFormValid: this.state.noteNameValid && this.state.noteContentValid 
+    });
+  }
+
+  
+
+
+  validateFolderName(fieldValue) {
+    const fieldErrors = {...this.state.validationMessages};
+    let hasError = false;
+
+    fieldValue = fieldValue.trim();
+    if(fieldValue.length === 0) {
+      fieldErrors.folderName = 'Name is required';
+      hasError = true;
+    } else {
+      if (fieldValue.length < 3) {
+        fieldErrors.folderName = 'Name must be at least 3 characters long';
+        hasError = true;
+      } else {
+        fieldErrors.folderName = '';
+        hasError = false;
+      }
+    }
+
+    this.setState({
+      validationMessages: fieldErrors,
+      folderNameValid: !hasError
+    }, this.folderFormValid);
+
+  }
+
+  folderFormValid() {
+    this.setState({
+      folderFormValid: this.state.folderNameValid
+    });
+  }
+
+  handleAddFolder = (event)=>{
+    event.preventDefault();
+    let newFolder = {
+      name: event.target['folder-name'].value
+    }
+      console.log(newFolder);
+
+    if(this.state.folderFormValid){
+
+      fetch(`http://localhost:9090/folders`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' }, 
+        body:JSON.stringify(newFolder)
+        })
+        .then(res => res.json())
+        .then(folder => this.setState({
+          STORE:{
+            folders: [
+            ...this.state.STORE.folders,
+            folder],
+            notes:[...this.state.STORE.notes],
+          }
+        },() => this.props.history.push('/'))
+          )
+        ;
+        
+    }
+  }
+
+  
+  handleAddNote = (event)=>{
+    event.preventDefault();
+    let newNote = {
+      name: event.target['note-name'].value,
+      content:event.target['note-content'].value,
+      folderId: event.target['note-folder-id'].value,
+      modified: new Date(),
+    }
+
+    if(this.state.noteFormValid){
+
+      fetch(`http://localhost:9090/notes`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' }, 
+        body:JSON.stringify(newNote)
+        })
+        .then(res => res.json())
+        .then(note =>  this.setState({
+          STORE:{
+            notes: [
+            ...this.state.STORE.notes,
+            note],
+            folders:[...this.state.STORE.folders],
+          }
+        },() => this.props.history.push('/'))
+          );
+        
+    }
+    
+  }
+
   
   handleDelete = (noteId) => {
 
@@ -73,7 +252,12 @@ class App extends React.Component {
   }
   }
 
+  handleCancelForm = () =>{
+    this.props.history.goBack();
+  }
+
   render(){
+    console.log(this.state.folderName);
   return (
     <NotefulContext.Provider value={{ store: this.state.STORE, fromOrigin:this.state.fromOrigin, changeOrigin:this.changeOrigin,
     handleDelete: this.handleDelete }}>
@@ -92,6 +276,14 @@ class App extends React.Component {
 
     <section>
       <Route path='/Note/:id' render={(props) => <NotePage match={props.match}  />} />
+    </section>
+
+    <section>
+      <Route path='/AddFolder' render={() => <AddFolder handleCancelForm = {this.handleCancelForm} handleAddFolder={this.handleAddFolder} folderFormValid={this.state.folderFormValid} validationMessages={this.state.validationMessages} updateFolderName={this.updateFolderName} />} />
+    </section>
+
+    <section>
+      <Route path='/AddNote' render={() => <AddNote folders ={this.state.STORE.folders} handleCancelForm = {this.handleCancelForm} handleAddNote={this.handleAddNote} noteFormValid={this.state.noteFormValid} validationMessages={this.state.validationMessages} updateNoteName={this.updateNoteName} updateNoteContent ={this.updateNoteContent} />} />
     </section>
 
     </main>

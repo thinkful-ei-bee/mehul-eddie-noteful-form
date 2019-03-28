@@ -1,6 +1,8 @@
 import React from 'react';
 import Folder from './Folder'
 import NotefulContext from './NotefulContext'
+import {NavLink} from 'react-router-dom';
+
 
 class FolderList extends React.Component  {
 
@@ -18,6 +20,10 @@ class FolderList extends React.Component  {
     return (
       <ul className='folderList'>
         {folders}
+        <li key={'add-folder-key'} className ='folderItem'>         
+        <NavLink onClick={() =>this.context.changeOrigin(false)} to={`/AddFolder`}>
+        Add Folder</NavLink>
+      </li>
       </ul>
     );
   }

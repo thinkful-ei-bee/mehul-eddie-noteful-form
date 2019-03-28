@@ -1,6 +1,8 @@
 import React from 'react';
 import Note from './Note'
 import NotefulContext from './NotefulContext'
+import {NavLink} from 'react-router-dom';
+
 
 class NoteList extends React.Component  {
     
@@ -28,6 +30,11 @@ class NoteList extends React.Component  {
     return (
       <ul className="noteList">
         {newnotes}
+        <li key={'add-note-key'} className ='noteList'>         
+        <NavLink onClick={() =>this.context.changeOrigin(false)} to={`/AddNote`}>
+        Add Note</NavLink>
+      </li>
+
       </ul>
     );
   }
