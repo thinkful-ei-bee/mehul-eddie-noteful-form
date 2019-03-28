@@ -1,6 +1,8 @@
 import React from 'react';
 import NotefulContext from './NotefulContext'
 import ValidationError from './ValidationError'
+import PropTypes from 'prop-types';
+
 
 class AddNote extends React.Component  {
     
@@ -25,7 +27,7 @@ class AddNote extends React.Component  {
               Folder
             </label>
             <select id='note-folder-select' name='note-folder-id'>
-              <option value={null}>...</option>
+              
               {this.props.folders.map(folder =>
                 <option key={folder.id} value={folder.id}>
                   {folder.name}
@@ -54,5 +56,16 @@ class AddNote extends React.Component  {
     )
   }
 }
+
+AddNote.propTypes = {
+  handleCancelForm: PropTypes.func,
+  handleAddNote: PropTypes.func,
+  folderFormValid: PropTypes.bool,
+  validationMessages: PropTypes.object,
+  updateNoteName:PropTypes.func,
+  updateNoteContent:PropTypes.func,
+  folders:PropTypes.array
+};
+
 
 export default AddNote;

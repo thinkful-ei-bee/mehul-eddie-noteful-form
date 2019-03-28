@@ -3,6 +3,8 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import moment from 'moment';
 import NotefulContext from './NotefulContext'
+import PropTypes from 'prop-types';
+
 
 
 class NotePage extends React.Component  {
@@ -49,5 +51,7 @@ else{
 }
   }
 }
-
+NotePage.propTypes = {
+  match: PropTypes.object
+};
 export default NotePage;

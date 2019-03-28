@@ -9,7 +9,6 @@ class FolderList extends React.Component  {
   static contextType = NotefulContext;
 
   render() {
-    console.log(this.context.changeOrigin);
     let folders = this.context.store.folders.map(folder =>{
       return <Folder 
         key={folder.id}

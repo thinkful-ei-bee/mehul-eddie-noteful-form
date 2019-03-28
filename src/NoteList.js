@@ -2,6 +2,8 @@ import React from 'react';
 import Note from './Note'
 import NotefulContext from './NotefulContext'
 import {NavLink} from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 
 
 class NoteList extends React.Component  {
@@ -39,5 +41,9 @@ class NoteList extends React.Component  {
     );
   }
 }
+
+NoteList.propTypes = {
+  match: PropTypes.object
+};
 
 export default NoteList;

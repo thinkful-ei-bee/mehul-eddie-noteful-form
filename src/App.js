@@ -9,6 +9,9 @@ import NotefulContext from './NotefulContext'
 import {withRouter} from 'react-router-dom';
 import AddFolder from './AddFolder'
 import AddNote from './AddNote'
+import NoteError from './NotefulError'
+import FolderError from './FolderError'
+
 class App extends React.Component {
 
   constructor(props) {
@@ -143,7 +146,6 @@ class App extends React.Component {
     let newFolder = {
       name: event.target['folder-name'].value
     }
-      console.log(newFolder);
 
     if(this.state.folderFormValid){
 
@@ -208,7 +210,6 @@ class App extends React.Component {
       })
       .then (res => {
         if (res.ok) {
-          console.log('delete worked');
           this.props.history.push('/');
           const newNotes = this.state.STORE.notes.filter(note => note.id !== noteId);
           this.setState({
@@ -224,6 +225,7 @@ class App extends React.Component {
   componentDidMount() {
     let folders;
     let notes;
+
 
     fetch('http://localhost:9090/folders')
       .then (res => res.json())
@@ -257,8 +259,8 @@ class App extends React.Component {
   }
 
   render(){
-    console.log(this.state.folderName);
   return (
+
     <NotefulContext.Provider value={{ store: this.state.STORE, fromOrigin:this.state.fromOrigin, changeOrigin:this.changeOrigin,
     handleDelete: this.handleDelete }}>
     <main className='App'>
@@ -277,17 +279,21 @@ class App extends React.Component {
     <section>
       <Route path='/Note/:id' render={(props) => <NotePage match={props.match}  />} />
     </section>
-
+    <FolderError>
     <section>
       <Route path='/AddFolder' render={() => <AddFolder handleCancelForm = {this.handleCancelForm} handleAddFolder={this.handleAddFolder} folderFormValid={this.state.folderFormValid} validationMessages={this.state.validationMessages} updateFolderName={this.updateFolderName} />} />
     </section>
+    </FolderError>
 
+    <NoteError>
     <section>
       <Route path='/AddNote' render={() => <AddNote folders ={this.state.STORE.folders} handleCancelForm = {this.handleCancelForm} handleAddNote={this.handleAddNote} noteFormValid={this.state.noteFormValid} validationMessages={this.state.validationMessages} updateNoteName={this.updateNoteName} updateNoteContent ={this.updateNoteContent} />} />
     </section>
+    </NoteError>
 
     </main>
    </NotefulContext.Provider>
+
 
   );
   }

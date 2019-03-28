@@ -1,6 +1,8 @@
 import React from 'react';
 import NotefulContext from './NotefulContext'
 import ValidationError from './ValidationError'
+import PropTypes from 'prop-types';
+
 
 class AddFolder extends React.Component  {
     
@@ -30,5 +32,13 @@ class AddFolder extends React.Component  {
     )
   }
 }
+
+AddFolder.propTypes = {
+    handleCancelForm: PropTypes.func,
+    handleAddFolder: PropTypes.func,
+    folderFormValid: PropTypes.bool,
+    validationMessages: PropTypes.object,
+    updateFolderName:PropTypes.func,
+  };
 
 export default AddFolder;
