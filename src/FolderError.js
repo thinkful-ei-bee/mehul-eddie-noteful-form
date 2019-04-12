@@ -1,7 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import moment from 'moment';
-import NotefulContext from './NotefulContext'
+
 
 class FolderError extends React.Component {
 

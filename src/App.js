@@ -11,8 +11,10 @@ import AddFolder from './AddFolder'
 import AddNote from './AddNote'
 import NoteError from './NotefulError'
 import FolderError from './FolderError'
+import {BASE_URL,API_KEY} from './config';
 
 class App extends React.Component {
+
 
   constructor(props) {
     super(props);
@@ -149,9 +151,11 @@ class App extends React.Component {
 
     if(this.state.folderFormValid){
 
-      fetch(`http://localhost:9090/folders`, {
+      fetch(`${BASE_URL}/folders`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' }, 
+        headers: { 
+          'Authorization': 'Bearer ' + API_KEY,
+          'content-type': 'application/json' }, 
         body:JSON.stringify(newFolder)
         })
         .then(res => res.json())
@@ -181,9 +185,11 @@ class App extends React.Component {
 
     if(this.state.noteFormValid){
 
-      fetch(`http://localhost:9090/notes`, {
+      fetch(`${BASE_URL}/notes`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' }, 
+        headers: { 
+          'Authorization': 'Bearer ' + API_KEY,
+          'content-type': 'application/json' }, 
         body:JSON.stringify(newNote)
         })
         .then(res => res.json())
@@ -204,9 +210,11 @@ class App extends React.Component {
   
   handleDelete = (noteId) => {
 
-    fetch(`http://localhost:9090/notes/${noteId}`, {
+    fetch(`${BASE_URL}/notes/${noteId}`, {
       method: 'DELETE',
-      headers: { 'content-type': 'application/json' }, 
+      headers: { 
+        'Authorization': 'Bearer ' + API_KEY,
+        'content-type': 'application/json' }, 
       })
       .then (res => {
         if (res.ok) {
@@ -227,11 +235,25 @@ class App extends React.Component {
     let notes;
 
 
-    fetch('http://localhost:9090/folders')
+    fetch(`${BASE_URL}/folders`,
+    {
+      method: 'GET',
+      headers: { 
+        'Authorization': 'Bearer ' + API_KEY,
+        'content-type': 'application/json' }, 
+      }
+    )
       .then (res => res.json())
       .then (res => {folders = res})
       .then (
-        fetch('http://localhost:9090/notes')
+        fetch(`${BASE_URL}/notes`,
+        {
+          method: 'GET',
+          headers: { 
+            'Authorization': 'Bearer ' + API_KEY,
+            'content-type': 'application/json' }, 
+          }
+        )
         .then (res => res.json())
         .then (res => {notes = res})
         .then (res => 

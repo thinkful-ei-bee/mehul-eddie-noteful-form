@@ -14,7 +14,7 @@ class NoteList extends React.Component  {
     let NOTES =null;
     if(this.props.match !== undefined){
      NOTES = this.context.store.notes.filter(note =>{
-       return note.folderId === this.props.match.params.id
+       return note.folderid === this.props.match.params.id
       }
     )
     }
