@@ -281,6 +281,7 @@ class App extends React.Component {
   }
 
   render(){
+    console.log("update");
   return (
 
     <NotefulContext.Provider value={{ store: this.state.STORE, fromOrigin:this.state.fromOrigin, changeOrigin:this.changeOrigin,
